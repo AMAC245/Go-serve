@@ -1,25 +1,29 @@
 package main
 
 import (
-	"log"
+	"fmt"
 	"net/http"
-
-	"github.com/gorilla/mux"
+	"os"
 )
 
-type Movie struct {
-	ID string `json:"id"`
+func indexHandler(w http.ResponseWriter, r *http.Request) {
+	fmt.Fprintf(w, port())
+}
+
+func subHandler(w http.ResponseWriter, r *http.Request) {
+	fmt.Fprintf(w, "sub")
+}
+
+func port() string {
+	port := os.Getenv("PORT")
+	if len(port) == 0 {
+		port = "8080"
+	}
+	return ":" + port
 }
 
 func main() {
-	//router instance
-	route := mux.NewRouter()
-
-	route.HandleFunc("/movies", getMovies).Method("GET")
-	route.HandleFunc("/movies/{id}", getMovie).Method("GET")
-	route.HandleFunc("/movies", addMovies).Method("GET")
-	route.HandleFunc("/movies/{id}", updateMovie).Method("GET")
-	route.HandleFunc("/movies/{id}", deleteMovies).Method("GET")
-
-	log.Fatal(http.ListenAndServe(":5000", route))
+	http.HandleFunc("/", indexHandler)
+	http.HandleFunc("/about", subHandler)
+	http.ListenAndServe(port(), nil)
 }
