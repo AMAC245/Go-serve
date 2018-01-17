@@ -9,11 +9,10 @@ import (
 
 //typed routes/api
 const (
-	base         string = "/"
-	sub          string = "/sub"
-	endpoint     string = "https://api.dribbble.com/v1/shots"
-	test_rebound string = "/3850371"
-	access       string = "?access_token=859f432cad2e206603ed29d9c5728f0c14673e2ea14c453b07f3b05a36cd2fea"
+	BASE         string = "/"
+	SUB          string = "/sub"
+	ENDPOINT     string = "https://api.dribbble.com/v1/shots"
+	TEST_REBOUND string = "/3850371"
 )
 
 func indexHandler(w http.ResponseWriter, r *http.Request) {
@@ -33,7 +32,8 @@ func port() string {
 }
 
 func fetchData() {
-	resp, err := http.Get(endpoint + access)
+	token := os.Getenv("TOKEN")
+	resp, err := http.Get(ENDPOINT + token)
 	if err != nil {
 		fmt.Println(err)
 	}
@@ -46,7 +46,8 @@ func fetchData() {
 
 func main() {
 	fetchData()
-	http.HandleFunc(base, indexHandler)
-	http.HandleFunc(sub, subHandler)
+
+	http.HandleFunc(BASE, indexHandler)
+	http.HandleFunc(SUB, subHandler)
 	http.ListenAndServe(port(), nil)
 }
